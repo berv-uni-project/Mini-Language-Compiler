@@ -1,0 +1,9 @@
+begin
+	n = 0 - 0
+	do
+		input(a)
+		output(a)
+		n = n + 1
+	while (a <> 42)
+	output(n)
+end
