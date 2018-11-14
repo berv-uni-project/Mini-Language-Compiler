@@ -1,8 +1,7 @@
 # Mini Language Compiler
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1321d95bf070444cbad71c39cb2987df)](https://app.codacy.com/app/berviantoleo/Mini-Language-Compiler?utm_source=github.com&utm_medium=referral&utm_content=berv-uni-project/Mini-Language-Compiler&utm_campaign=Badge_Grade_Settings)
-
-![Travis Build](https://travis-ci.org/berviantoleo/Mini-Language-Compiler.svg?branch=master)
+[![Build Status](https://travis-ci.org/berv-uni-project/Mini-Language-Compiler.svg?branch=master)](https://travis-ci.org/berv-uni-project/Mini-Language-Compiler)
 
 Learning to parsing and to be mini compiler for small language
 
