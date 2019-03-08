@@ -4,10 +4,5 @@ language: c
 
 compiler : gcc
 
-before_script:
-- chmod +x $TRAVIS_BUILD_DIR/compile.sh
-
 script:
-- $TRAVIS_BUILD_DIR/compile.sh
-- chmod +x $TRAVIS_BUILD_DIR/bin/compiler
-- $TRAVIS_BUILD_DIR/bin/compiler
+  - cmake .
