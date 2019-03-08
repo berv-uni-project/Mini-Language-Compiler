@@ -1,4 +1,4 @@
-/* file : boolean.h */
+/* File : boolean.h */
 #ifndef boolean_h
 #define boolean_h
 

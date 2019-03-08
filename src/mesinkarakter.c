@@ -1,41 +1,37 @@
-#include "mesinkarakter.h"
+#include "header/mesin_karakter.h"
 
 //definisi states
-char CC;
+char current_character;
 boolean EOP;
 
 static FILE *pita;
-static int retval;
 
-void START()
-/* 	I.S. sembarang
-	F.S. CC adalah karakter pertama pita (stdin)
+void start(const char *filename)
+/* 	I.stack. sembarang
+	F.stack. current_character adalah karakter pertama pita (stdin)
 		 Bila Kondisi EOP terpenuhi, nyalakan EOP
 */
 {
-		pita = fopen("program.txt","r");
-		if (pita==NULL)
-		{
-			fprintf(stderr, "No file\n" );
-			EOP=true;
-		}
-		else
-		{
-			ADV();
-		}
+    pita = fopen(filename, "r");
+    if (pita == NULL) {
+        fprintf(stderr, "No file\n");
+        EOP = true;
+    } else {
+        advance();
+    }
 }
 
-void ADV()
-/*	I.S. CC!=mark
-	F.S. CC adalah karakter berikutnya yang dapat diakuisisi
-		 contoh untuk pita "IF", bila CC menunjuk 'I', maka CC berikutnya adalah 'F' 
+void advance()
+/*	I.stack. current_character!=mark
+	F.stack. current_character adalah karakter berikutnya yang dapat diakuisisi
+		 contoh untuk pita "IF", bila current_character menunjuk 'I', maka current_character berikutnya adalah 'F'
 		 Bila Kondisi EOP terpenuhi, nyalakan EOP
 */
 {
-	CC=fgetc(pita);
-	EOP = (CC==EOF);
-	if (EOP)	{
-		fclose(pita);
-	}
+    current_character = fgetc(pita);
+    EOP = (current_character == EOF);
+    if (EOP) {
+        fclose(pita);
+    }
 }
 

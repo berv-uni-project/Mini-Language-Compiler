@@ -1,399 +1,315 @@
-#include "scanner.h"
+#include "header/scanner.h"
 
-ArrToken X;
+ArrToken tokens;
 
-boolean IsVar(char CC)
-{
-	if ((CC=='+') || (CC=='-') || (CC=='*') || (CC=='<') || (CC=='>') || (CC=='='))
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
+boolean is_variable(char current_character) {
+    if ((current_character == '+') || (current_character == '-') || (current_character == '*') ||
+        (current_character == '<') || (current_character == '>') || (current_character == '=')) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
-boolean IsBilangan(char CC)
-{
-	if ((CC>='0') &&(CC<='9'))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+boolean is_number(char current_character) {
+    if ((current_character >= '0') && (current_character <= '9')) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
-boolean IsStringBilangan(char C[])
-{
-	boolean found;
-	int i;
-	i=0;
-	found=false;
-	while ((C[i]!='\0') && (!found))
-	{
-		if (!IsBilangan(C[i]))
-		{
-			found=true;
-		} else
-		{
-			i++;
-		}
-	}
-	if (found)
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
+boolean is_number_string(char *currentString) {
+    boolean found;
+    int i;
+    i = 0;
+    found = false;
+    while ((currentString[i] != '\0') && (!found)) {
+        if (!is_number(currentString[i])) {
+            found = true;
+        } else {
+            i++;
+        }
+    }
+    if (found) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
-boolean IsLogic(char C[])
-{
-	int num;
-	num = strlen(C);
-	if (num==2)
-	{
-		if ((((C[0]=='<')||(C[0]=='>')) && (C[1]=='=')) || ((C[0]=='<') && (C[1]=='>')))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	} else if (num==1)
-	{
-		if ((C[0]=='<') || (C[0]=='>'))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	} else
-	{
-		return false;
-	}
+boolean is_logic(char *current_character) {
+    int num;
+    num = strlen(current_character);
+    if (num == 2) {
+        if ((((current_character[0] == '<') || (current_character[0] == '>')) && (current_character[1] == '=')) ||
+            ((current_character[0] == '<') && (current_character[1] == '>'))) {
+            return true;
+        } else {
+            return false;
+        }
+    } else if (num == 1) {
+        if ((current_character[0] == '<') || (current_character[0] == '>')) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
 }
 
-void scanner()
-{
-	char Temp[30];
-	int i,j,baris;
-	START();
-	i=0;
-	baris=1;
-	while (!EOP)
-	{
-		if (CC=='(')
-		{
-			X.Tab[i]='(';
-			X.baris[i]=baris;
-			i++;
-			ADV();
-		} else if (CC==')')
-		{
-			X.Tab[i]=')';
-			X.baris[i]=baris;
-			i++;
-			ADV();
-		}
-		else if (CC=='\n')
-		{
-			baris++;
-			ADV();
-		} else if (CC=='b')
-		{
-			j=0;
-			while ((CC!=' ') && (CC!='(')&& (CC!=')')&&(CC!='\n') && (CC!=EOF))
-			{
-				Temp[j]=CC;
-				ADV();
-				j++;
-			}
-			Temp[j]='\0';
-			if (strcmp(Temp,"begin")==0)
-			{
-				X.Tab[i]='b';
-				X.baris[i]=baris;
-				i++;
-			}
-			else
-			{
-				X.Tab[i]='v';
-				X.baris[i]=baris;
-				i++;
-			}
-		} else if (CC=='e')
-		{
-			j=0;
-			while ((CC!=' ') && (CC!='(') && (CC!=')') && (CC!='\n') && (CC!=EOF))
-			{
-				Temp[j]=CC;
-				ADV();
-				j++;
-			}
-			Temp[j]='\0';
-			if (strcmp(Temp,"end")==0)
-			{
-				X.Tab[i]='e';
-				X.baris[i]=baris;
-				i++;
-			}
-			else if (strcmp(Temp,"else")==0)
-			{
-				X.Tab[i]='l';
-				X.baris[i]=baris;
-				i++;
-			} else
-			{
-				X.Tab[i]='v';
-				X.baris[i]=baris;
-				i++;
-			}
-		} else if (CC=='i')
-		{
-			j=0;
-			while ((CC!='(') && (CC!=' ') && (CC!=')') &&(CC!='\n') && (CC!=EOF))
-			{
-				Temp[j]=CC;
-				ADV();
-				j++;
-			}
-			Temp[j]='\0';
-			if (strcmp(Temp,"if")==0)
-			{
-				X.Tab[i]='i';
-				X.baris[i]=baris;
-				i++;
-			} else if (strcmp(Temp,"input")==0)
-			{
-				X.Tab[i]='n';
-				X.baris[i]=baris;
-				i++;
-			} else
-			{
-				X.Tab[i]='v';
-				X.baris[i]=baris;
-				i++;
-			}
-		} 
-		else if (CC=='d')
-		{
-			j=0;
-			while ((CC!=' ') && (CC!='(') && (CC!=')') && (CC!='\n') && (CC!=EOF))
-			{
-				Temp[j]=CC;
-				ADV();
-				j++;
-			}
-			Temp[j]='\0';
-			if (strcmp(Temp,"do")==0)
-			{
-				X.Tab[i]='d';
-				X.baris[i]=baris;
-				i++;
-			} else
-			{
-				X.Tab[i]='v';
-				X.baris[i]=baris;
-				i++;
-			}
-		}
-		else if (CC=='f')
-		{
-			j=0;
-			while ((CC!=' ') && (CC!='(') && (CC!=')') && (CC!='\n') && (CC!=EOF))
-			{
-				Temp[j]=CC;
-				ADV();
-				j++;
-			}
-			Temp[j]='\0';
-			if (strcmp(Temp,"for")==0)
-			{
-				X.Tab[i]='f';
-				X.baris[i]=baris;
-				i++;
-			} else
-			{
-				X.Tab[i]='v';
-				X.baris[i]=baris;
-				i++;
-			}
-		}
-		else if (CC=='o')
-		{
-			j=0;
-			while ((CC!='(') && (CC!=')')&&(CC!=' ') && (CC!='\n') && (CC!=EOF))
-			{
-				Temp[j]=CC;
-				ADV();
-				j++;
-			}
-			Temp[j]='\0';
-			if (strcmp(Temp,"output")==0)
-			{
-				X.Tab[i]='o';
-				X.baris[i]=baris;
-				i++;
-			} else
-			{
-				X.Tab[i]='v';
-				X.baris[i]=baris;
-				i++;
-			}
-		}
-		else if ((CC=='w'))
-		{
-			j=0;
-			while ((CC!='(') && (CC!=')') &&(CC!=' ') && (CC!='\n') && (CC!=EOF))
-			{
-				Temp[j]=CC;
-				ADV();
-				j++;
-			}
-			Temp[j]='\0';
-			if (strcmp(Temp,"while")==0)
-			{
-				X.Tab[i]='w';
-				X.baris[i]=baris;
-				i++;
-			} else
-			{
-				X.Tab[i]='v';
-				X.baris[i]=baris;
-				i++;
-			}
-		}
-		else if ((CC=='t'))
-		{
-			j=0;
-			while ((CC!='(') && (CC!=')')&&(CC!=' ') && (CC!='\n') && (CC!=EOF))
-			{
-				Temp[j]=CC;
-				ADV();
-				j++;
-			}
-			Temp[j]='\0';
-			if (strcmp(Temp,"to")==0)
-			{
-				X.Tab[i]='t';
-				X.baris[i]=baris;
-				i++;
-			}
-			else if (strcmp(Temp,"then")==0)
-			{
-				X.Tab[i]='h';
-				X.baris[i]=baris;
-				i++;
-			} else
-			{
-				X.Tab[i]='v';
-				X.baris[i]=baris;
-				i++;
-			}
-		} 
-		else if ((CC=='\t') || (CC==' '))
-		{
-			while (((CC=='\t') || (CC==' ')) && (CC!=EOF))
-			{
-				ADV();
-			}
-		} else if (CC=='{')
-		{
-			while ((CC!='}') && (CC!=EOF))
-			{
-				if (CC=='\n')
-				{
-					baris++;
-				}
-				ADV();
-			}
-			if (CC=='}')
-			{
-				ADV();
-			}
-		} else if(IsBilangan(CC))
-		{
-			j=0;
-			while ((CC!=EOF)&&(CC!=' ') &&(CC!=')')&&(CC!='\n'))
-			{
-				Temp[j]=CC;
-				ADV();
-				j++;
-			}
-			Temp[j]='\0';
-			if (IsStringBilangan(Temp))
-			{
-				X.Tab[i]='c';
-				X.baris[i]=baris;
-				i++;
-			} else
-			{
-				X.Tab[i]='z'; // unknown identifier
-				X.baris[i]=baris;
-				i++;
-			}
-		} else if ((CC=='+')||(CC=='-')||(CC=='*'))
-		{
-			X.Tab[i]='a';
-			X.baris[i]=baris;
-			ADV();
-			i++;
-		} else if ((CC=='<') || (CC=='>'))
-		{
-			j=0;
-			while ((CC=='<') || (CC=='>') || (CC=='='))
-			{
-				Temp[j]=CC;
-				ADV();
-				j++;
-			}
-			Temp[j]='\0';
-			if (IsLogic(Temp))
-			{
-				X.Tab[i]='x';
-				X.baris[i]=baris;
-				i++;
-			} else
-			{
-				X.Tab[i]='z'; //unknown var
-				X.baris[i]=baris;
-				i++;
-			}
-		} else if (CC=='=')
-		{
-			ADV();
-			X.Tab[i]='=';
-			X.baris[i]=baris;
-			i++;
-		}
-		else
-		{
-			while((!EOP) && (CC!=' ') && (CC!='\n') && (CC!='(')&&(CC!=')') && (IsVar(CC)))
-			{
-				ADV();
-			}
-			X.Tab[i]='v';
-			X.baris[i]=baris;
-			i++;
-		}
-	}
+void scanner(const char *filename) {
+    char Temp[30];
+    int i, j, row;
+    start(filename);
+    i = 0;
+    row = 1;
+    while (!EOP) {
+        if (current_character == '(') {
+            tokens.tab[i] = '(';
+            tokens.row[i] = row;
+            i++;
+            advance();
+        } else if (current_character == ')') {
+            tokens.tab[i] = ')';
+            tokens.row[i] = row;
+            i++;
+            advance();
+        } else if (current_character == '\n') {
+            row++;
+            advance();
+        } else if (current_character == 'b') {
+            j = 0;
+            while ((current_character != ' ') && (current_character != '(') && (current_character != ')') &&
+                   (current_character != '\n') && (current_character != EOF)) {
+                Temp[j] = current_character;
+                advance();
+                j++;
+            }
+            Temp[j] = '\0';
+            if (strcmp(Temp, "begin") == 0) {
+                tokens.tab[i] = 'b';
+                tokens.row[i] = row;
+                i++;
+            } else {
+                tokens.tab[i] = 'v';
+                tokens.row[i] = row;
+                i++;
+            }
+        } else if (current_character == 'e') {
+            j = 0;
+            while ((current_character != ' ') && (current_character != '(') && (current_character != ')') &&
+                   (current_character != '\n') && (current_character != EOF)) {
+                Temp[j] = current_character;
+                advance();
+                j++;
+            }
+            Temp[j] = '\0';
+            if (strcmp(Temp, "end") == 0) {
+                tokens.tab[i] = 'e';
+                tokens.row[i] = row;
+                i++;
+            } else if (strcmp(Temp, "else") == 0) {
+                tokens.tab[i] = 'l';
+                tokens.row[i] = row;
+                i++;
+            } else {
+                tokens.tab[i] = 'v';
+                tokens.row[i] = row;
+                i++;
+            }
+        } else if (current_character == 'i') {
+            j = 0;
+            while ((current_character != '(') && (current_character != ' ') && (current_character != ')') &&
+                   (current_character != '\n') && (current_character != EOF)) {
+                Temp[j] = current_character;
+                advance();
+                j++;
+            }
+            Temp[j] = '\0';
+            if (strcmp(Temp, "if") == 0) {
+                tokens.tab[i] = 'i';
+                tokens.row[i] = row;
+                i++;
+            } else if (strcmp(Temp, "input") == 0) {
+                tokens.tab[i] = 'n';
+                tokens.row[i] = row;
+                i++;
+            } else {
+                tokens.tab[i] = 'v';
+                tokens.row[i] = row;
+                i++;
+            }
+        } else if (current_character == 'd') {
+            j = 0;
+            while ((current_character != ' ') && (current_character != '(') && (current_character != ')') &&
+                   (current_character != '\n') && (current_character != EOF)) {
+                Temp[j] = current_character;
+                advance();
+                j++;
+            }
+            Temp[j] = '\0';
+            if (strcmp(Temp, "do") == 0) {
+                tokens.tab[i] = 'd';
+                tokens.row[i] = row;
+                i++;
+            } else {
+                tokens.tab[i] = 'v';
+                tokens.row[i] = row;
+                i++;
+            }
+        } else if (current_character == 'f') {
+            j = 0;
+            while ((current_character != ' ') && (current_character != '(') && (current_character != ')') &&
+                   (current_character != '\n') && (current_character != EOF)) {
+                Temp[j] = current_character;
+                advance();
+                j++;
+            }
+            Temp[j] = '\0';
+            if (strcmp(Temp, "for") == 0) {
+                tokens.tab[i] = 'f';
+                tokens.row[i] = row;
+                i++;
+            } else {
+                tokens.tab[i] = 'v';
+                tokens.row[i] = row;
+                i++;
+            }
+        } else if (current_character == 'o') {
+            j = 0;
+            while ((current_character != '(') && (current_character != ')') && (current_character != ' ') &&
+                   (current_character != '\n') && (current_character != EOF)) {
+                Temp[j] = current_character;
+                advance();
+                j++;
+            }
+            Temp[j] = '\0';
+            if (strcmp(Temp, "output") == 0) {
+                tokens.tab[i] = 'o';
+                tokens.row[i] = row;
+                i++;
+            } else {
+                tokens.tab[i] = 'v';
+                tokens.row[i] = row;
+                i++;
+            }
+        } else if ((current_character == 'w')) {
+            j = 0;
+            while ((current_character != '(') && (current_character != ')') && (current_character != ' ') &&
+                   (current_character != '\n') && (current_character != EOF)) {
+                Temp[j] = current_character;
+                advance();
+                j++;
+            }
+            Temp[j] = '\0';
+            if (strcmp(Temp, "while") == 0) {
+                tokens.tab[i] = 'w';
+                tokens.row[i] = row;
+                i++;
+            } else {
+                tokens.tab[i] = 'v';
+                tokens.row[i] = row;
+                i++;
+            }
+        } else if ((current_character == 't')) {
+            j = 0;
+            while ((current_character != '(') && (current_character != ')') && (current_character != ' ') &&
+                   (current_character != '\n') && (current_character != EOF)) {
+                Temp[j] = current_character;
+                advance();
+                j++;
+            }
+            Temp[j] = '\0';
+            if (strcmp(Temp, "to") == 0) {
+                tokens.tab[i] = 't';
+                tokens.row[i] = row;
+                i++;
+            } else if (strcmp(Temp, "then") == 0) {
+                tokens.tab[i] = 'h';
+                tokens.row[i] = row;
+                i++;
+            } else {
+                tokens.tab[i] = 'v';
+                tokens.row[i] = row;
+                i++;
+            }
+        } else if ((current_character == '\t') || (current_character == ' ')) {
+            while (((current_character == '\t') || (current_character == ' ')) && (current_character != EOF)) {
+                advance();
+            }
+        } else if (current_character == '{') {
+            while ((current_character != '}') && (current_character != EOF)) {
+                if (current_character == '\n') {
+                    row++;
+                }
+                advance();
+            }
+            if (current_character == '}') {
+                advance();
+            }
+        } else if (is_number(current_character)) {
+            j = 0;
+            while ((current_character != EOF) && (current_character != ' ') && (current_character != ')') &&
+                   (current_character != '\n')) {
+                Temp[j] = current_character;
+                advance();
+                j++;
+            }
+            Temp[j] = '\0';
+            if (is_number_string(Temp)) {
+                tokens.tab[i] = 'c';
+                tokens.row[i] = row;
+                i++;
+            } else {
+                tokens.tab[i] = 'z'; // unknown identifier
+                tokens.row[i] = row;
+                i++;
+            }
+        } else if ((current_character == '+') || (current_character == '-') || (current_character == '*')) {
+            tokens.tab[i] = 'a';
+            tokens.row[i] = row;
+            advance();
+            i++;
+        } else if ((current_character == '<') || (current_character == '>')) {
+            j = 0;
+            while ((current_character == '<') || (current_character == '>') || (current_character == '=')) {
+                Temp[j] = current_character;
+                advance();
+                j++;
+            }
+            Temp[j] = '\0';
+            if (is_logic(Temp)) {
+                tokens.tab[i] = 'x';
+                tokens.row[i] = row;
+                i++;
+            } else {
+                tokens.tab[i] = 'z'; //unknown var
+                tokens.row[i] = row;
+                i++;
+            }
+        } else if (current_character == '=') {
+            advance();
+            tokens.tab[i] = '=';
+            tokens.row[i] = row;
+            i++;
+        } else {
+            while ((!EOP) && (current_character != ' ') && (current_character != '\n') && (current_character != '(') &&
+                   (current_character != ')') && (is_variable(current_character))) {
+                advance();
+            }
+            tokens.tab[i] = 'v';
+            tokens.row[i] = row;
+            i++;
+        }
+    }
 }
 
-void InitialToken()
-{
-	int i;
-	for (i=0;i<=ELMAX-1;i++)
-	{
-		X.Tab[i]='|';
-		X.baris[i]=1;
-	}
+void initial_tokens() {
+    int i;
+    for (i = 0; i <= ELMAX - 1; i++) {
+        tokens.tab[i] = '|';
+        tokens.row[i] = 1;
+    }
 }

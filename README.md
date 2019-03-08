@@ -5,7 +5,7 @@
 
 Learning to parsing and to be mini compiler for small language
 
-### Run executable code compiler.exe with command prompt.
+## Run executable code compiler.exe with command prompt.
 
 ### Membuat input :
   * (edit file "program.txt")
