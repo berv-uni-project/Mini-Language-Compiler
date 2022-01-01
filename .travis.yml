@@ -1,8 +1,0 @@
-dist: xenial
-
-language: c
-
-compiler : gcc
-
-script:
-  - cmake .
